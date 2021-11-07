@@ -17,8 +17,8 @@ function Season() {
 	const [championId, setChampionId] = useState('');
 
 	const fetchRaceData = async () => {
-		const championResponse = await axios(`http://ergast.com/api/f1/${raceYear}/driverStandings/1/drivers.json?limit=1`);
-		const raceResponse = await axios(`http://ergast.com/api/f1/${raceYear}/results/1.json`);
+		const championResponse = await axios(`https://ergast.com/api/f1/${raceYear}/driverStandings/1/drivers.json?limit=1`);
+		const raceResponse = await axios(`https://ergast.com/api/f1/${raceYear}/results/1.json`);
 		setChampionId(processChampionData(championResponse));
 		setRaces(processRaceData(raceResponse));
 	};

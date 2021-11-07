@@ -18,7 +18,7 @@ function Home() {
 	}, [year]);
 
 	const fetchChapmions = async () => {
-		const response = await axios('http://ergast.com/api/f1/driverStandings/1.json?limit=100');
+		const response = await axios('https://ergast.com/api/f1/driverStandings/1.json?limit=100');
 		setChampions(processResponse(response));
 	};
 
