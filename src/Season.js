@@ -11,14 +11,16 @@ const axios = require('axios');
 
 function Season() {
 
+	const d = new Date();
+	const currentYear = d.getFullYear();
 	const { year } = useParams();
 	const [races, setRaces] = useState([]);
-	const [raceYear, setRaceYear] = useState(year || '2021');
+	const [raceSeason, setRaceSeason] = useState(year || currentYear);
 	const [championId, setChampionId] = useState('');
 
 	const fetchRaceData = async () => {
-		const championResponse = await axios(`https://ergast.com/api/f1/${raceYear}/driverStandings/1/drivers.json?limit=1`);
-		const raceResponse = await axios(`https://ergast.com/api/f1/${raceYear}/results/1.json`);
+		const championResponse = await axios(`https://ergast.com/api/f1/${raceSeason}/driverStandings/1/drivers.json?limit=1`);
+		const raceResponse = await axios(`https://ergast.com/api/f1/${raceSeason}/results/1.json`);
 		setChampionId(processChampionData(championResponse));
 		setRaces(processRaceData(raceResponse));
 	};
@@ -47,12 +49,12 @@ function Season() {
 
 	useEffect(() => {
 		fetchRaceData();
-	}, [raceYear]);
+	}, [raceSeason]);
 
 	let SliderConfig = {
 		range: {
 			min: 1950,
-			max: 2021
+			max: currentYear
 		},
 		bars: {
 			colors: ['#1E3857', '#1E3857']
@@ -60,11 +62,11 @@ function Season() {
 	}
 
 	let handleSliderChange = (value) => {
-		setRaceYear(value[0]);
+		setRaceSeason(value[0]);
 	}
 
 	let renderDetails = () => {
-		let headData = ['Round', 'Race Name', 'Driver Name', 'Nationality'];
+		let headData = ['Round', { value: 'Race Name', class: 'text-left' }, { value: 'Driver Name', class: 'text-left' }, { value: 'Nationality', class: 'text-left' }];
 		let bodyData = [];
 		let hasWinner = false;
 		races.forEach(element => {
@@ -80,7 +82,7 @@ function Season() {
 			bodyData.push([round, raceName, driverName, nationality])
 		});
 
-		let raceText = (hasWinner) ? <p><FontAwesomeIcon icon={faTrophy} size='1x' color='#DFD072' style={{ marginRight: '3px' }} /> Indicates the champion of the season {raceYear}.</p> : <p>No champion found for the season {raceYear}.</p>;
+		let raceText = (hasWinner) ? <p><FontAwesomeIcon icon={faTrophy} size='1x' color='#DFD072' style={{ marginRight: '3px' }} /> Indicates the champion of the season {raceSeason}.</p> : <p>No champion found for the season {raceSeason}.</p>;
 		return <div style={{ marginTop: '50px' }}>
 			<p style={{ textAlign: 'left' }}>{raceText}</p>
 			<TableView
@@ -100,7 +102,7 @@ function Season() {
 		return <div style={{ width: '70%', margin: '0 auto' }}>
 			<Slider
 				key='CriteriaLackOfResponse'
-				value={[raceYear]}
+				value={[raceSeason]}
 				settings={SliderConfig}
 				widgetId='criteria'
 				onDragEnd={handleSliderChange} />

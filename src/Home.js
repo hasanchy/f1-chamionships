@@ -10,8 +10,10 @@ const axios = require('axios');
 
 function Home() {
 
+	const d = new Date();
+	const currentYear = d.getFullYear();
 	const [champions, setChampions] = useState([]);
-	const [year, setYear] = useState({ min: 2005, max: 2021 });
+	const [year, setYear] = useState({ min: 2005, max: currentYear });
 
 	useEffect(() => {
 		fetchChapmions();
@@ -27,10 +29,13 @@ function Home() {
 		let StandingsLists = data?.data?.MRData?.StandingsTable?.StandingsLists || [];
 		StandingsLists.forEach(element => {
 			let obj = {
-				year: element.season,
+				season: element.season,
 				givenName: element.DriverStandings[0].Driver.givenName,
 				familyName: element.DriverStandings[0].Driver.familyName,
-				nationality: element.DriverStandings[0].Driver.nationality
+				nationality: element.DriverStandings[0].Driver.nationality,
+				url: element.DriverStandings[0].Driver.url,
+				points: element.DriverStandings[0].points,
+				wins: element.DriverStandings[0].wins
 			};
 			processedData.push(obj);
 		});
@@ -50,7 +55,7 @@ function Home() {
 		let SliderConfig = {
 			range: {
 				min: 1950,
-				max: 2021
+				max: currentYear
 			},
 			bars: {
 				colors: ['#1E3857', '#FD2D10', '#1E3857']
@@ -60,7 +65,7 @@ function Home() {
 		return <div style={{ width: '70%', margin: '0 auto' }}>
 			<Slider
 				key='CriteriaLackOfResponse'
-				value={[2005, 2021]}
+				value={[2005, currentYear]}
 				settings={SliderConfig}
 				onDragEnd={handleSliderChange} />
 		</div>
@@ -73,20 +78,18 @@ function Home() {
 	}
 
 	const renderTableView = () => {
-		let headData = ['Year', 'Name', 'Nationality', ''];
+		let headData = ['Season', { value: 'Name', class: 'text-left' }, { value: 'Nationality', class: 'text-left' }, 'Wins', 'Points', { value: '', class: 'text-right' }];
 		let bodyData = [];
 		champions.forEach(element => {
-			if (element.year >= year.min && element.year <= year.max) {
-				let year = element.year;
-				let name = `${element.givenName} ${element.familyName}`;
-				let nationality = element.nationality;
-				let button = <Link to={`/season/${year}`} className='float-right'>
+			if (element.season >= year.min && element.season <= year.max) {
+				let name = <a href={element.url} target='_blank'>{element.givenName} {element.familyName}</a>;
+				let button = <Link to={`/season/${element.season}`}>
 					<button className='f1-button'>
 						<FontAwesomeIcon icon={faEye} size='1x' /> View
 					</button>
 				</Link>
 
-				bodyData.push([year, name, nationality, button])
+				bodyData.push([element.season, name, element.nationality, element.wins, element.points, button])
 			}
 		});
 

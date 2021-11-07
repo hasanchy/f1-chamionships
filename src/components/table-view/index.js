@@ -1,40 +1,37 @@
 function TableView(props) {
-	return (
-		<div className='f1-table-wrapper' style={{ marginTop: '20px' }}>
-			<table className='f1-table' width='100%'>
-				<TableHeader value={props.headData} />
-				<TableBody value={props.bodyData} />
-			</table>
-		</div>
-	);
-}
 
-function TableHeader(props) {
-	return <thead>
-		<tr>
-			{props.value.map(function (item, i) {
-				return <th key={i}>{item}</th>
-			})}
-		</tr>
-	</thead>
-}
-
-function TableBody(props) {
 	let trHtml = [];
-	if (props?.value) {
-		props.value.forEach((trItem, i) => {
+	if (props.bodyData) {
+		props.bodyData.forEach((trItem, i) => {
 			let tdValue = (trItem.value) ? trItem.value : trItem;
+
 			trHtml.push(<tr key={i} className={trItem.class || ''}>
 				{tdValue.map(function (tdItem, j) {
-					return <td key={j}>{tdItem}</td>
+					let tdClass = (props.headData[j].class) ? props.headData[j].class : '';
+					return <td key={j} className={tdClass}>{tdItem}</td>
 				})}
 			</tr>)
 		});
 	}
 
-	return <tbody>
-		{trHtml}
-	</tbody>
+	return (
+		<div className='f1-table-wrapper'>
+			<table className='f1-table'>
+				<thead>
+					<tr>
+						{props.headData.map(function (item, i) {
+							let value = (typeof item === 'object') ? item.value : item;
+							let thClass = (props.headData[i].class) ? props.headData[i].class : '';
+							return <th key={i} className={thClass}>{value}</th>
+						})}
+					</tr>
+				</thead>
+				<tbody>
+					{trHtml}
+				</tbody>
+			</table>
+		</div>
+	);
 }
 
 export default TableView;
